@@ -28,8 +28,7 @@ Storage Account (bacpac)
 ## 📂 Estructura del repositorio
 
 ```
-ppdemo-iac/
-├─ terraform/
+demo-iac/
 │  ├─ main.tf
 │  ├─ variables.tf
 │  ├─ outputs.tf
@@ -39,11 +38,11 @@ ppdemo-iac/
 │  ├─ sql.tf
 │  ├─ nsg.tf
 │  ├─ network.tf
-│  └─ tags.tf
-├─ scripts/
+│  |─ tags.tf
 │  ├─ cloud-init-web.sh
-│  └─ import-bacpac.sh
-└─ README.md
+│  ├─ import-bacpac.sh
+|  └─ README.md
+
 ```
 
 ---

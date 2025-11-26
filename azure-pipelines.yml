@@ -20,7 +20,7 @@ steps:
   inputs:
     terraformVersion: '1.8.4'
 
-# Login con Service Principal (no usa Azure CLI interactiva)
+# Login con Service Principal
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'ServiceConnectionName'
