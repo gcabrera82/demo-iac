@@ -1,0 +1,66 @@
+trigger:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  ARM_CLIENT_ID: $(ARM_CLIENT_ID)
+  ARM_CLIENT_SECRET: $(ARM_CLIENT_SECRET)
+  ARM_TENANT_ID: $(ARM_TENANT_ID)
+  ARM_SUBSCRIPTION_ID: $(ARM_SUBSCRIPTION_ID)
+
+steps:
+- checkout: self
+
+# Instalación Terraform
+- task: InstallTerraformInstaller@1
+  inputs:
+    terraformVersion: '1.8.4'
+
+# Login con Service Principal (no usa Azure CLI interactiva)
+- task: AzureCLI@2
+  inputs:
+    azureSubscription: 'ServiceConnectionName'
+    scriptType: bash
+    scriptLocation: inlineScript
+    inlineScript: |
+      echo "Autenticando con Service Principal..."
+      az account show
+
+# Terraform Init
+- script: |
+    cd terraform
+    terraform init
+  displayName: 'Terraform Init'
+
+# Terraform Plan
+- script: |
+    cd terraform
+    terraform plan -out=tfplan
+  displayName: 'Terraform Plan'
+
+# Publicar el plan como artefacto
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'terraform/tfplan'
+    ArtifactName: 'tfplan'
+    publishLocation: 'Container'
+
+# Terraform Apply (solo en main)
+- script: |
+    cd terraform
+    terraform apply -auto-approve tfplan
+  displayName: 'Terraform Apply'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+
+# Importación del BACPAC (opcional)
+- script: |
+    cd scripts
+    chmod +x import-bacpac.sh
+    ./import-bacpac.sh
+  displayName: 'Import BACPAC'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/main')
+
