@@ -30,7 +30,7 @@ runcmd:
   # Descargar index.php desde tu repositorio
   # ------------------------------------------
   - rm -f /var/www/html/index.nginx-debian.html
-  - curl -o /var/www/html/index.php https://raw.githubusercontent.com/leandroamore/ppdemo/main/index.php
+  - curl -o /var/www/html/index.php https://raw.githubusercontent.com/gcabrera82/ppdemo/patch-2/index.php
 
   # ------------------------------------------
   # Ajustar permisos
