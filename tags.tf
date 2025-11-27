@@ -4,9 +4,9 @@
 
 locals {
   common_tags = {
-    CreadoPor        = var.creado_por
-    FechaDeCreacion  = var.fecha_creacion
-    Proposito        = var.proposito
+    CreadoPor       = var.creado_por
+    FechaDeCreacion = var.fecha_creacion
+    Proposito       = var.proposito
   }
 }
 

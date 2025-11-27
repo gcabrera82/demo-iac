@@ -1,7 +1,7 @@
 resource "azurerm_lb" "lb" {
   name                = "${var.resource_group}-lb"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = local.rg_name
+  location            = local.rg_region
   sku                 = "Standard"
   frontend_ip_configuration {
     name                 = "PublicFrontend"
@@ -12,23 +12,23 @@ resource "azurerm_lb" "lb" {
 
 resource "azurerm_public_ip" "lb_pip" {
   name                = "${var.resource_group}-lb-pip"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = local.rg_name
+  location            = local.rg_region
   allocation_method   = "Static"
   sku                 = "Standard"
-  tags = local.common_tags
+  tags                = local.common_tags
 }
 
 resource "azurerm_lb_backend_address_pool" "bepool" {
-  name                = "bepool"
-  loadbalancer_id     = azurerm_lb.lb.id
+  name            = "bepool"
+  loadbalancer_id = azurerm_lb.lb.id
 }
 
 resource "azurerm_lb_probe" "http_probe" {
-  name                = "http-probe"
-  loadbalancer_id     = azurerm_lb.lb.id
-  protocol            = "Tcp"
-  port                = 80
+  name            = "http-probe"
+  loadbalancer_id = azurerm_lb.lb.id
+  protocol        = "Tcp"
+  port            = 80
 }
 
 resource "azurerm_lb_rule" "http_rule" {

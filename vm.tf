@@ -1,8 +1,8 @@
 resource "azurerm_network_interface" "web_nic" {
   count               = 2
-  name                = "nic-web-${count.index+1}"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
+  name                = "nic-web-${count.index + 1}"
+  resource_group_name = local.rg_name
+  location            = local.rg_region
 
   ip_configuration {
     name                          = "ipconfig"
@@ -15,15 +15,19 @@ resource "azurerm_network_interface" "web_nic" {
 
 resource "azurerm_linux_virtual_machine" "web" {
   count               = 2
-  name                = "vm-web-${count.index+1}"
-  resource_group_name = azurerm_resource_group.rg.name
-  location            = azurerm_resource_group.rg.location
+  name                = "vm-web-${count.index + 1}"
+  resource_group_name = local.rg_name
+  location            = local.rg_region
   size                = "Standard_B2ms"
 
   admin_username = "azureuser"
-  admin_password = "P@ssw0rd1234!" # mejor usar ssh key y variables seguras
+  admin_password = "P@ssw0rd1234!"
 
-  network_interface_ids = [azurerm_network_interface.web_nic[count.index].id]
+  disable_password_authentication = false
+
+  network_interface_ids = [
+    azurerm_network_interface.web_nic[count.index].id
+  ]
 
   os_disk {
     caching              = "ReadWrite"
@@ -38,5 +42,5 @@ resource "azurerm_linux_virtual_machine" "web" {
   }
 
   custom_data = filebase64("${path.module}/scripts/cloud-init-web.sh")
-  tags = local.common_tags
+  tags        = local.common_tags
 }

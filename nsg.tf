@@ -1,7 +1,7 @@
 resource "azurerm_network_security_group" "web_nsg" {
   name                = "${var.resource_group}-web-nsg"
-  location            = azurerm_resource_group.rg.location
-  resource_group_name = azurerm_resource_group.rg.name
+  resource_group_name = local.rg_name
+  location            = local.rg_region
 
   tags = local.common_tags
 }
@@ -18,7 +18,7 @@ resource "azurerm_network_security_rule" "allow_http" {
   destination_address_prefix  = "*"
   source_port_range           = "*"
   network_security_group_name = azurerm_network_security_group.web_nsg.name
-  resource_group_name         = azurerm_resource_group.rg.name
+  resource_group_name         = local.rg_name
 }
 
 # (Opcional) Permitir SSH desde tu IP pública
@@ -33,7 +33,7 @@ resource "azurerm_network_security_rule" "allow_ssh" {
   destination_address_prefix  = "*"
   source_port_range           = "*"
   network_security_group_name = azurerm_network_security_group.web_nsg.name
-  resource_group_name         = azurerm_resource_group.rg.name
+  resource_group_name         = local.rg_name
 }
 
 # Permitir tráfico interno dentro de la VNet
@@ -48,7 +48,7 @@ resource "azurerm_network_security_rule" "allow_vnet_inbound" {
   source_port_range           = "*"
   destination_port_range      = "*"
   network_security_group_name = azurerm_network_security_group.web_nsg.name
-  resource_group_name         = azurerm_resource_group.rg.name
+  resource_group_name         = local.rg_name
 }
 
 ###############################################
