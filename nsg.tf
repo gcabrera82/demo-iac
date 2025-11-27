@@ -6,10 +6,26 @@ resource "azurerm_network_security_group" "web_nsg" {
   tags = local.common_tags
 }
 
+resource "azurerm_network_security_rule" "allow_http_public" {
+  name                        = "allow-http-public"
+  priority                    = 100
+  direction                   = "Inbound"
+  access                      = "Allow"
+  protocol                    = "Tcp"
+
+  source_address_prefix       = "Internet"
+  destination_port_range      = "80"
+  destination_address_prefix  = "*"
+  source_port_range           = "*"
+
+  resource_group_name         = local.rg_name
+  network_security_group_name = azurerm_network_security_group.web_nsg.name
+}
+
 # Permitir tráfico desde el Load Balancer al puerto 80
 resource "azurerm_network_security_rule" "allow_http" {
   name                        = "allow-http-80"
-  priority                    = 100
+  priority                    = 101
   direction                   = "Inbound"
   access                      = "Allow"
   protocol                    = "Tcp"
